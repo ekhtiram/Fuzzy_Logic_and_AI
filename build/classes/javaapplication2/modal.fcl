@@ -1,0 +1,41 @@
+FUNCTION_BLOCK model
+
+    VAR_INPUT
+        saat : REAL;
+    END_VAR
+    
+    VAR_OUTPUT
+        doluluk : REAL;
+    END_VAR
+
+    //Servis bulaniklastirma
+    FUZZIFY saat
+        TERM cerken := (759,1)(959,0);
+        TERM erken := (932,0)(1026,1)(1125,0);
+        TERM oglen := (1059,0)(1229,1) (1329,1) (1429,0);
+        TERM aksam :=(1402,0)(1530,1) (1631,1);
+    END_FUZZIFY
+
+    //Durulama
+    DEFUZZIFY doluluk
+        TERM az:= (61,1)(110,0);
+        TERM orta := (107,0)(143,1)(238,0);
+        TERM cok := (219,0) (263,1) (269,1);
+
+        METHOD : COG; // rm lm mm com cog
+        DEFAULT := 50;
+    END_DEFUZZIFY
+
+    //Mamdani
+    RULEBLOCK kuralblock
+        AND : MIN;
+        ACT : MIN;
+        ACCU : MAX;
+
+        RULE 1 : IF saat IS cerken THEN doluluk IS az;
+        RULE 2 : IF saat IS erken THEN doluluk IS orta;
+        RULE 3 : IF saat IS oglen THEN doluluk IS cok;
+        RULE 4 : IF saat IS aksam THEN doluluk IS orta;
+    END_RULEBLOCK
+
+END_FUNCTION_BLOCK 
